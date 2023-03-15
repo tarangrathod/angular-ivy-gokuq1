@@ -12,5 +12,5 @@ jobs:
       with:
         token: ${{ secrets.ACTION_SECRET }}
         version_regex: '([0-9]+\.[0-9]+\.[0-9]+)'
-        version_tag_prefix: 'ng-R'
+        version_tag_prefix: 'V'
         check_entire_commit_message: true
