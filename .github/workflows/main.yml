@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: christophebedard/tag-version-commit@v1
       with:
-        token: ${{ secrets.token1 }}
+        token: ${{ secrets.ACTION_SECRET }}
         version_regex: '([0-9]+\.[0-9]+\.[0-9]+)'
         version_tag_prefix: 'ng-R'
         check_entire_commit_message: true
