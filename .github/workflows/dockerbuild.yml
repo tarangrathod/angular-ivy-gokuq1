@@ -36,7 +36,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         conte xt: .
-        file: ../../src/Dockerfile
+        file: ../../Dockerfile
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:steps.tag-version-commit.outputs.tag
         # build-args: [ZXBILD=demo]
