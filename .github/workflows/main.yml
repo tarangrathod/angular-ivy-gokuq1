@@ -6,6 +6,9 @@ on:
 jobs:
   tag:
     runs-on: ubuntu-latest
+    # run: | 
+    #   t=$(git describe --tags `git rev-list --tags --max-count=1`)
+    #   echo $t
     steps:
     - uses: actions/checkout@v2
     - uses: christophebedard/tag-version-commit@v1
@@ -14,8 +17,6 @@ jobs:
         version_regex: '([0-9]+\.[0-9]+\.[0-9]+)'
         version_tag_prefix: 'V'
         check_entire_commit_message: true
-    run: | 
-      t=$(git describe --tags `git rev-list --tags --max-count=1`)
-      echo $t
+    
     env:
       RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
