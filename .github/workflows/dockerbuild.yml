@@ -38,6 +38,5 @@ jobs:
         conte xt: .
         file: ./Dockerfile
         push: true
-        build-args:
-          - ZXBILD='demo'
+        build-args: [ZXBILD='demo']
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:steps.tag-version-commit.outputs.tag
