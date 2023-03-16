@@ -39,4 +39,4 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:steps.tag-version-commit.outputs.tag
-        build-args: [ZXBILD=demo]
+        # build-args: [ZXBILD=demo]
