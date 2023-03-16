@@ -19,4 +19,4 @@ jobs:
         check_entire_commit_message: true
     
     env:
-      RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+      RELEASE_VERSION: ${{ steps.tag.outputs.tag_name }}
