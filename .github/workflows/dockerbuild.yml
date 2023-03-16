@@ -9,6 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      -  uses: christophebedard/tag-version-commit@v1
+        id: tag-version-commit
+        with:
+          token: ${{ secrets.TOKEN1 }}
+          version_regex: '([0-9]+\.[0-9]+\.[0-9]+)'
+          version_tag_prefix: 'V'
+          check_entire_commit_message: true
+        - run: echo "${{ steps.tag-version-commit.outputs.tag }}"
       -
         name: Checkout
         uses: actions/checkout@v3
@@ -22,14 +30,6 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       
-      -  uses: christophebedard/tag-version-commit@v1
-        id: tag-version-commit
-        with:
-          token: ${{ secrets.TOKEN1 }}
-          version_regex: '([0-9]+\.[0-9]+\.[0-9]+)'
-          version_tag_prefix: 'V'
-          check_entire_commit_message: true
-        - run: echo "${{ steps.tag-version-commit.outputs.tag }}"
       -
         name: Build and push
         uses: docker/build-push-action@v4
@@ -39,4 +39,4 @@ jobs:
           push: true
           build-args:
             - ZXBILD='demo'
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:steps.tag-version-commit.outputs.tag
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:steps.tag-version-commit.outputs.tag
