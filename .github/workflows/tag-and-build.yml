@@ -22,7 +22,7 @@ jobs:
           export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -o 'V=[0-9]\.[0-9]\.[0-9]' | cut -d= -f2)
           export ZXBILD=$(echo $COMMIT_MESSAGE | grep -o 'ENV=^[a-zA-Z ]*$' | cut -d= -f2)
           if [[ ! "$ZXBILD" =~ ^(ENV=dev|ENV=test|ENV=prod)$ ]]; then exit 1; fi
-        shell: "bash --noprofile --norc {0}""
+        shell: "bash --noprofile --norc {0}"
 
       - name: Create Tag
         run: |
