@@ -21,10 +21,10 @@
 #     - run: echo "${{ steps.tag-version-commit.outputs.tag }}"
  
 - name: Create Git tag from commit message
-   - shell: bash --noprofile --norc -eo pipefail "msys2do {0}"
+  shell: "bash --noprofile --norc {0}"
   - run: |
     tag=$(git log -1 --pretty=%B | grep -o 'VERSION=[0-9]\.[0-9]\.[0-9]' | cut -d= -f2)
     git tag $tag
     git push --tags
   env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    GITHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
