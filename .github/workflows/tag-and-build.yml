@@ -1,51 +1,35 @@
-
-
-name: Tag and Build
+name: Tag and Build Docker Container
 
 on:
   push:
     branches:
       - main
 
-env:
-  TAG_NAME: ""
-  COMMIT_MESSAGE: ""
-
 jobs:
-  build:
+  tag-and-build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set Tag Name
-        run: |
-          export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -o 'V=[0-9]\.[0-9]\.[0-9]' | tr '[:upper:]' '[:lower:]')
-          echo $COMMIT_MESSAGE
-          echo $TAG_NAME
-        shell: bash
+    - name: Find commit message and tag version
+      run: |
+        COMMIT_MESSAGE=$(git log -1 --pretty=format:%s)
+        TAG=$(echo "$COMMIT_MESSAGE" | grep -oP '(?<=#version:)[^\s]+')
+        if [ -z "$TAG" ]; then
+          echo "No version tag found in commit message"
+          exit 1
+        fi
+        echo "Tagging commit with version $TAG"
+        git tag -a "$TAG" -m "Version $TAG"
+        git push origin "$TAG"
 
-      - name: Create Tag
-        run: |
-          git tag -a $TAG_NAME -m $TAG_NAME
-          git push origin $TAG_NAME
-
-      - name: Set Build Arg
-        run: |
-          export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          export ZXBILD=$(echo $COMMIT_MESSAGE | grep -oP 'ENV=^[a-zA-Z ]*$' | tr '[:upper:]' '[:lower:]')
-          if [[ ! "$ZXBILD" =~ ^(dev|test|prod)$ ]]; then exit 1; fi
-        shell: bash
-
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          build-args: ZXBILD=${ZXBILD}
-          push: true
-          tags: docker.pkg.github.com/${{ github.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
-        env:
-          username: ${{ github.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build Docker image and tag with version
+      if: success()
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ env.DOCKERHUB_USERNAME }}/gitaction:$TAG
