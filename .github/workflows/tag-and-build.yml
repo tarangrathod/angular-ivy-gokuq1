@@ -22,7 +22,7 @@ jobs:
       - name: Set Tag Name
         run: |
           export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -oP 'V=[0-9]\.[0-9]\.[0-9]' | tr '[:upper:]' '[:lower:]')
+          export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -o 'V=[0-9]\.[0-9]\.[0-9]' | tr '[:upper:]' '[:lower:]')
           echo $COMMIT_MESSAGE
           echo $TAG_NAME
         shell: bash
