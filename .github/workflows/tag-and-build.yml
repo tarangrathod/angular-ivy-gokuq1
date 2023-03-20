@@ -9,6 +9,7 @@ on:
 
 env:
   TAG_NAME: ""
+  COMMIT_MESSAGE: ""
 
 jobs:
   build:
@@ -26,7 +27,7 @@ jobs:
 
       - name: Create Tag
         run: |
-          git tag -a $TAG_NAME -m $COMMIT_MESSAGE
+          git tag -a $TAG_NAME -m ${{ env.COMMIT_MESSAGE }}
           git push origin $TAG_NAME
 
       - name: Set Build Arg
