@@ -21,7 +21,7 @@ jobs:
       if: steps.parse_commit_message.outputs.tag != ''
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN1 }}
+        GITHUB_TOKEN: ${{ secrets.MY_SECRET }}
       with:
         tag_name: ${{ steps.parse_commit_message.outputs.tag }}
         release_name: ${{ steps.parse_commit_message.outputs.tag }}
