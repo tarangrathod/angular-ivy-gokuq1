@@ -26,6 +26,7 @@ jobs:
 
       - name: Create Tag
         run: |
+          echo $COMMIT_MESSAGE
           git tag -a $TAG_NAME -m $COMMIT_MESSAGE
           git push origin $TAG_NAME
 
