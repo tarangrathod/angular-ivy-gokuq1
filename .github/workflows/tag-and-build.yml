@@ -23,7 +23,6 @@ jobs:
         run: |
           export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -oP 'V=[0-9]\.[0-9]\.[0-9]' | tr '[:upper:]' '[:lower:]')
-          echo ${{ env.COMMIT_MESSAGE }}
           echo $COMMIT_MESSAGE
           echo $TAG_NAME
         shell: bash
