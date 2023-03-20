@@ -1,4 +1,5 @@
 
+
 name: Tag and Build
 
 on:
@@ -21,12 +22,11 @@ jobs:
         run: |
           export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -oP 'V=[0-9]\.[0-9]\.[0-9]' | tr '[:upper:]' '[:lower:]')
-          echo  "${COMMIT_MESSAGE}" 
         shell: bash
 
       - name: Create Tag
         run: |
-          git tag $TAG_NAME -am "added tag"
+          git tag -a $TAG_NAME -m $COMMIT_MESSAGE
           git push origin $TAG_NAME
 
       - name: Set Build Arg
