@@ -12,11 +12,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Get tag and environment name from commit message
-      id: get-vars
+    - name: Set tag and environment name from ref
+      id: set-vars
       run: |
-        export TAG_NAME=$(grep -oP '(?<=\[tag=)[^\]]+' <<< "$GITHUB_REF")
-        export ENV_NAME=$(grep -oP '(?<=\[env=)[^\]]+' <<< "$GITHUB_REF")
+        echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        echo "ENV_NAME=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_ENV
 
     - name: Check if tag and environment name are defined
       run: |
