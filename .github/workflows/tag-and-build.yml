@@ -28,8 +28,7 @@ jobs:
     - name: Create Git tag
       if: success()
       run: |
-        git tag "$TAG_NAME"
-        git push origin "$TAG_NAME:refs/tags/$TAG_NAME"
+        git tag -a "$TAG_NAME" -m "$TAG_NAME:refs/tags/$TAG_NAME"
 
     - name: Build Docker image
       if: success()
