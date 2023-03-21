@@ -15,7 +15,7 @@ jobs:
       
     - name: Parse Commit Message
       id: parse_commit_message
-      run: echo ::set-output name=tag::$(grep -oP 'tag:\s*\K\w+' $GITHUB_EVENT_PATH || true)
+      run: echo ::set-output name=tag::$(grep -oP 'tag:[0-9]\.[0-9]\.[0-9]' $GITHUB_EVENT_PATH || true)
 
     - name: Create Tag
       if: steps.parse_commit_message.outputs.tag != ''
