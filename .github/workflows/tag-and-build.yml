@@ -42,7 +42,7 @@ jobs:
         context: .
         push: false
         tags: |
-          tarangzignex/gitaction:"$TAG_NAME-$ENV_NAME"
+          tarangzignex/gitaction:"TAG_NAME"
           tarangzignex/gitaction:"$TAG_NAME-latest"
         build-args: |
           ZXBUILD=$ENV_NAME
