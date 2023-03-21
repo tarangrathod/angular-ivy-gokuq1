@@ -28,7 +28,10 @@ jobs:
     - name: Create Git tag
       if: success()
       run: |
+        git config user.name "Your Name"
+        git config user.email "youremail@example.com"
         git tag -a "$TAG_NAME" -m "$TAG_NAME:refs/tags/$TAG_NAME"
+       
 
     - name: Build Docker image
       if: success()
