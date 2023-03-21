@@ -16,7 +16,6 @@ I hope this helps! Let me know if you have any questions.
 
 
 
-
 The error "Tag name and environment name must be defined in commit message" suggests that the script is not able to extract the tag and environment name from the commit message.
 
 One possible solution is to ensure that you are using the correct format for the commit message. The script is looking for the tags and environment names in the commit message in the following format: "[tag=TAG_NAME] [env=ENV_NAME]". Therefore, make sure that you are adding the tag and environment name in the commit message in this format.
