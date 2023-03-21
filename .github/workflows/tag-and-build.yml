@@ -34,9 +34,11 @@ jobs:
       if: steps.parse_commit_message.outputs.tag != ''
       uses: docker/build-push-action@v2
       with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
         context: .
         push: true
         tags: |
-          github.DOCKERHUB_USERNAME/your-docker-repo:env.TAG_NAME 
-          your-docker-registry/your-docker-repo:${{ steps.parse_commit_message.outputs.tag }}
+          secrets.DOCKERHUB_USERNAME/gitaction:env.TAG_NAME 
+          secrets.DOCKERHUB_USERNAME/gitaction:${{ steps.parse_commit_message.outputs.tag }}
         build-args: zxbuild
