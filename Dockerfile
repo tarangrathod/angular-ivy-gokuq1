@@ -9,7 +9,6 @@ COPY . /usr/local/app
 # Generate the build of the application
 ARG ZXBILD='demo'   #default argument when not provided in the --build-arg
 
-
 RUN if [ "$ZXBILD" = "prod" ] ; then \
     npm run start; fi
 
