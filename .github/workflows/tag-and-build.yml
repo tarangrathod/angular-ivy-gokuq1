@@ -12,6 +12,53 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Get tag and environment name from commit message
+      id: get-vars
+      run: |
+        export TAG_NAME=$(grep -oP '(?<=\[tag=)[^\]]+' <<< "$GITHUB_REF")
+        export ENV_NAME=$(grep -oP '(?<=\[env=)[^\]]+' <<< "$GITHUB_REF")
+
+    - name: Check if tag and environment name are defined
+      run: |
+        if [[ -z "$TAG_NAME" || -z "$ENV_NAME" ]]; then
+          echo "Tag name and environment name must be defined in commit message"
+          exit 1
+        fi
+
+    - name: Create Git tag
+      if: success()
+      run: |
+        git tag "$TAG_NAME"
+        git push origin "$TAG_NAME"
+
+    - name: Build Docker image
+      if: success()
+      uses: docker/build-push-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        context: .
+        push: false
+        tags: |
+          secrets.DOCKERHUB_USERNAME /gitaction:$TAG_NAME-$ENV_NAME
+          secrets.DOCKERHUB_USERNAME/gitaction:$TAG_NAME-latest
+        build-args: |
+          ZXBUILD=$ENV_NAME
+
+
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  create-tag-and-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
     - name: Set tag and environment name from ref
       id: set-vars
       run: |
