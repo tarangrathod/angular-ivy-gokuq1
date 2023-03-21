@@ -2,8 +2,8 @@ name: Create Tag and Build Docker
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+    - '*'
 
 jobs:
   create-tag-and-build:
