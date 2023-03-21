@@ -9,41 +9,43 @@ jobs:
   create-tag-and-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set tag and environment name from ref
-        id: set-vars
-        run: |
-          echo "GITHUB_REF=${GITHUB_REF}" >> $GITHUB_ENV
-          echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          echo "ENV_NAME=${GITHUB_REF#refs/tags/v*/}" >> $GITHUB_ENV
-          echo "TAG_NAME=${TAG_NAME#v}" >> $GITHUB_ENV
+    - name: Set tag and environment name from ref
+      id: set-vars
+      run: |
+        echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        echo "ENV_NAME=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_ENV
 
-      - name: Check if tag and environment name are defined
-        run: |
-          if [[ -z "$TAG_NAME" || -z "$ENV_NAME" ]]; then
-            echo "Tag name and environment name must be defined in commit message"
-            echo "GITHUB_REF=${GITHUB_REF}"
-            echo "TAG_NAME=${TAG_NAME}"
-            echo "ENV_NAME=${ENV_NAME}"
-            exit 1
-          fi
+    - name: Check if tag and environment name are defined
+      run: |
+        if [[ -z "$TAG_NAME" || -z "$ENV_NAME" ]]; then
+          echo "Tag name and environment name must be defined in commit message"
+          exit 1
+        fi
 
-      - name: Create Git tag
-        if: success()
-        run: |
-          git tag "$TAG_NAME"
-          git push origin "$TAG_NAME"
+    - name: Create Git tag
+      if: success()
+      run: |
+        git config user.name "tarangrathod"
+        git config user.email "tarang@zignexclear.com"
+        git tag -a "$TAG_NAME" -m "$TAG_NAME:refs/tags/$TAG_NAME"
+       
 
-      - name: Build Docker image
-        if: success()
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: |
-            tarangzignex/gitaction:v$TAG_NAME-$ENV_NAME
-            tarangzignex/gitaction:v$TAG_NAME-latest
-          build-args: |
-            ZXBUILD=$ENV_NAME
+    - name: Build Docker image
+      if: success()
+      uses: docker/build-push-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        context: .
+        push: false
+        tags: |
+          tarangzignex/gitaction:"$TAG_NAME-$ENV_NAME"
+          tarangzignex/gitaction:"$TAG_NAME-latest"
+        build-args: |
+          ZXBUILD=$ENV_NAME
+
+          
+          
