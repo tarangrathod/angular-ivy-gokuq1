@@ -29,7 +29,7 @@ jobs:
       if: success()
       run: |
         git tag "$TAG_NAME"
-        git push origin "$TAG_NAME"
+        git push origin "$TAG_NAME:refs/tags/$TAG_NAME"
 
     - name: Build Docker image
       if: success()
