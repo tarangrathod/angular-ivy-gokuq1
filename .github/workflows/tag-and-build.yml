@@ -15,9 +15,10 @@ jobs:
     - name: Set tag and environment name from ref
       id: set-vars
       run: |
-        echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-        echo "ENV_NAME=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_ENV
-
+        export TAG_ENV=$(echo "${GITHUB_REF#refs/tags/v}" | tr '-' ' ')
+        export TAG_NAME=$(echo "${TAG_ENV}" | awk '{ print $1 }')
+        export ENV_NAME=$(echo "${TAG_ENV}" | awk '{ print $2 }')
+    
     - name: Check if tag and environment name are defined
       run: |
         if [[ -z "$TAG_NAME" || -z "$ENV_NAME" ]]; then
@@ -39,8 +40,8 @@ jobs:
         context: .
         push: false
         tags: |
-          tarangzignex/gitaction:${TAG_NAME//[^a-zA-Z0-9]/-}-$ENV_NAME
-          tarangzignex/gitaction:${TAG_NAME//[^a-zA-Z0-9]/-}-latest
+          tarangzignex/gitaction:${TAG_NAME}-${ENV_NAME}
+          tarangzignex/gitaction:${TAG_NAME}-latest
         build-args: |
           ZXBUILD=$ENV_NAME
       
