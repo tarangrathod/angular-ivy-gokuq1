@@ -73,3 +73,55 @@ jobs:
 This updated script uses the echo command to set the TAG_NAME and ENV_NAME variables in the env context. The TAG_NAME variable is set to the value of $GITHUB_REF with the refs/tags/ prefix removed. The ENV_NAME variable is set to the value of $GITHUB_REF with the refs/tags/*/ prefix removed. This should work as long as your tags follow the format vX.X.X-[ENV_NAME].
 
 Note that the set-vars step uses the id attribute to define a unique identifier for the step. This is necessary because we want to set variables using the env context, which can only be done in a separate step. The id attribute allows us to reference the TAG_NAME and ENV_NAME variables in the subsequent steps.
+
+
+
+
+
+
+jobs:
+  create-tag-and-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set tag and environment name from ref
+      id: set-vars
+      run: |
+        export TAG_ENV=$(echo "${GITHUB_REF#refs/tags/v}" | tr '-' ' ')
+        export TAG_NAME=$(echo "${TAG_ENV}" | awk '{ print $1 }')
+        export ENV_NAME=$(echo "${TAG_ENV}" | awk '{ print $2 }')
+    
+    - name: Check if tag and environment name are defined
+      run: |
+        if [[ -z "$TAG_NAME" || -z "$ENV_NAME" ]]; then
+          echo "Tag name and environment name must be defined in commit message"
+          exit 1
+        fi
+
+    - name: Create Git tag
+      if: success()
+      run: |
+        git config user.name "tarangrathod"
+        git config user.email "tarang@zignexclear.com"
+        git tag -a "$TAG_NAME" -m "$TAG_NAME:refs/tags/$TAG_NAME"
+   
+    - name: Build Docker image
+      if: success()
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: false
+        tags: |
+          tarangzignex/gitaction:${TAG_NAME}-${ENV_NAME}
+          tarangzignex/gitaction:${TAG_NAME}-latest
+        build-args: |
+          ZXBUILD=$ENV_NAME
+      
+
+
+on:
+  push:
+    tags:
+      - '*'
