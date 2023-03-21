@@ -31,18 +31,16 @@ jobs:
         git config user.name "tarangrathod"
         git config user.email "tarang@zignexclear.com"
         git tag -a "$TAG_NAME" -m "$TAG_NAME:refs/tags/$TAG_NAME"
-       
-
+   
     - name: Build Docker image
       if: success()
       uses: docker/build-push-action@v2
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
         context: .
         push: false
         tags: |
-          tarangzignex/gitaction:$TAG_NAME-$ENV_NAME
-          tarangzignex/gitaction:$TAG_NAME-latest
+          tarangzignex/gitaction:${TAG_NAME//[^a-zA-Z0-9]/-}-$ENV_NAME
+          tarangzignex/gitaction:${TAG_NAME//[^a-zA-Z0-9]/-}-latest
         build-args: |
           ZXBUILD=$ENV_NAME
+      
