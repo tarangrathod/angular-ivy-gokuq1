@@ -46,7 +46,9 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         tags: |
-          ${{secrets.DOCKERHUB_USERNAME}}/gitaction:$TAG_NAME_$ENV_NAME
+          echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          echo "ENV_NAME=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_ENV
+          ${{secrets.DOCKERHUB_USERNAME}}/gitaction:"$TAG_NAME_$ENV_NAME"
           ${{secrets.DOCKERHUB_USERNAME}}/gitaction:latest
         build-args: |
           ZXBUILD=$ENV_NAME
