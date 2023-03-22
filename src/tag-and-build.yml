@@ -60,5 +60,5 @@ jobs:
           push: true
           tags: ${{ env.TAG_NAME }}
           registry: docker.pkg.github.com
-          username: ${{ github.DOCKERHUB_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}

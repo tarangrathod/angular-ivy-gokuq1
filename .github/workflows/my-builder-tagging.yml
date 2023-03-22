@@ -45,7 +45,10 @@ jobs:
         push: false
         username: ${{ github.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
         tags: |
+          echo "ENV_NAME=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_ENV
+          echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           my-docker-registry/my-docker-image:$TAG_NAME-$ENV_NAME
           my-docker-registry/my-docker-image:$TAG_NAME-latest
         build-args: |
