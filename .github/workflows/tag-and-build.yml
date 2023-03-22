@@ -33,7 +33,8 @@ jobs:
           export LAST_VERSION=$(echo "$LAST_TAG" | cut -c $(echo "$TAG_PREFIX" | wc -m)-)
           export TAG_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP "V=[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?") || true
           if [[ "$TAG_NAME" == "" ]]; then
-          else
+            else
+
             if [[ ! "$TAG_NAME" =~ V=[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]? ]]; then
               echo "Invalid tag format in commit message. Skipping tag creation."
             else
