@@ -32,6 +32,7 @@ jobs:
           export LAST_TAG=$(git tag -l "$TAG_PREFIX*" | sort -r | head -n1)
           export LAST_VERSION=$(echo "$LAST_TAG" | cut -c $(echo "$TAG_PREFIX" | wc -m)-)
           export TAG_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP "$TAG_PREFIX\K\S+") || true
+          
           if [[ "$TAG_NAME" == "" ]]; then
           else
             if [[ ! "$TAG_NAME" =~ ^[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?+$ ]]; then
