@@ -40,8 +40,6 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         tags: |
-          echo ${{env.TAG_NAME}}
-          echo ${{env.ENV_NAME}}
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:latest
         build-args: |
