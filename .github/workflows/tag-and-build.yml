@@ -23,6 +23,7 @@ jobs:
           echo "TAG_NAME=$TAG_NAME"
           export ZXBILD=$(echo $COMMIT_MESSAGE | grep -oP 'ENV=^[a-zA-Z ]*$' | tr '[:upper:]' '[:lower:] | cut -d= -f')
           echo "ZXBILD=$ZXBILD"
+          echo "message=$COMMIT_MESSAGE"
           if [[ ! "$ZXBILD" =~ ^(dev|test|prod)$ ]]; then exit 1; fi
         shell: bash
 
