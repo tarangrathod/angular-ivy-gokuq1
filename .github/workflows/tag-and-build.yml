@@ -24,17 +24,36 @@ jobs:
           git config --global user.email "$GIT_AUTHOR_EMAIL"
           
       - name: Set Tag Name and Build Arg
+        id: set_tag_name_and_build_arg
         run: |
           export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-          export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -oP 'V=[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?' | tr '[:upper:]' '[:lower:]')
-          echo "TAG_NAME=$TAG_NAME"
-          export ZXBILD=$(echo $COMMIT_MESSAGE | grep -oP 'ENV=\K\S+')
-          echo "ZXBILD=$ZXBILD"
-          echo "message=$COMMIT_MESSAGE"
-          if [[ ! "$ZXBILD" =~ ^(dev|test|prod)$ ]]; then exit 1; fi
+          echo "No tag found in commit message. Skipping tag creation."
+          export TAG_PREFIX="V="
+          export LAST_TAG=$(git tag -l "$TAG_PREFIX*" | sort -r | head -n1)
+          export LAST_VERSION=$(echo "$LAST_TAG" | cut -c $(echo "$TAG_PREFIX" | wc -m)-)
+          export TAG_NAME=$(echo "$COMMIT_MESSAGE" | grep -oP "$TAG_PREFIX\K\S+") || true
+          if [[ "$TAG_NAME" == "" ]]; then
+          else
+            if [[ ! "$TAG_NAME" =~ V=[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?$ ]]; then
+              echo "Invalid tag format in commit message. Skipping tag creation."
+            else
+              if [[ "$TAG_NAME" == "$LAST_VERSION" ]]; then
+                export TAG_NAME=$(echo "$TAG_NAME" | awk -F. -v OFS=. '{$3++; print}')-retry
+                echo "Tag already exists. Retrying with incremented patch version: $TAG_NAME"
+              fi
+              export ZXBILD=$(echo "$COMMIT_MESSAGE" | grep -oP 'ENV=\K\S+')
+              echo "ZXBILD=$ZXBILD"
+              echo "message=$COMMIT_MESSAGE"
+              if [[ ! "$ZXBILD" =~ ^(dev|test|prod)$ ]]; then
+                echo "Invalid environment value in commit message. Exiting."
+                exit 1
+              fi
+            fi
+          fi
         shell: bash
 
       - name: Create Tag
+        if: success() && steps.set_tag_name_and_build_arg.outputs.TAG_NAME != ''
         run: |
           export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           export TAG_MESSAGE=$(echo $COMMIT_MESSAGE | grep -oP 'created tag name V=[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?\.[0-9][0-9]?[0-9]?' | tr '[:upper:]' '[:lower:]')
@@ -43,6 +62,7 @@ jobs:
           git push origin $TAG_NAME
 
       - name: Build Docker Image
+        if: success() && steps.set_tag_name_and_build_arg.outputs.TAG_NAME != ''
         uses: docker/build-push-action@v2
         with:
           run: |
@@ -53,6 +73,7 @@ jobs:
           tags: ${{ env.TAG_NAME }}
 
       - name: Push Docker Image
+        if: success() && steps.set_tag_name_and_build_arg.outputs.TAG_NAME != ''
         uses: docker/build-push-action@v2
         with:
           context: .
