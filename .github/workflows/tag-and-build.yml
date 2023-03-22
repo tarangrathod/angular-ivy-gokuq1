@@ -15,7 +15,14 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
+      - name: Set Git default identity
+        env:
+          GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
+          GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+        run: |
+          git config --global user.name "$GIT_AUTHOR_NAME"
+          git config --global user.email "$GIT_AUTHOR_EMAIL"
+          
       - name: Set Tag Name and Build Arg
         run: |
           export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
