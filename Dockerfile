@@ -10,22 +10,22 @@ COPY . /usr/local/app
 ARG ZXBILD='prod'   #default argument when not provided in the --build-arg
 
 RUN if [ "$ZXBILD" = "prod" ] ; then \
-    npm run start; fi
+    ng build; fi
 
 RUN if [ "$ZXBILD" = "dev" ] ; then \
-    npm run start; fi
+    ng build; fi
 
 RUN if [ "$ZXBILD" = "qa" ] ; then \
-    npm run start; fi
+    ng build; fi
 
 RUN if [ "$ZXBILD" = "demo" ] ; then \
-    npm run start; fi
+    ng build; fi
 
 RUN if [ "$ZXBILD" = "fcc" ] ; then \
-    npm run start; fi
+    ng build; fi
 
 RUN if [ "$ZXBILD" = "gfl" ] ; then \
-    npm run start; fi
+    ng build; fi
 
 
 # Stage 2: Serve app with nginx server
