@@ -31,6 +31,7 @@ jobs:
         run: |
           export COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           export TAG_MESSAGE=$(echo $COMMIT_MESSAGE | grep -oP 'created tag name V=[0-9]\.[0-9]\.[0-9]' | tr '[:upper:]' '[:lower:]')
+          export TAG_NAME=$(echo $COMMIT_MESSAGE | grep -oP 'V=[0-9]\.[0-9]\.[0-9]' | tr '[:upper:]' '[:lower:]')
           git tag -a $TAG_NAME -m "$TAG_MESSAGE"
           git push origin $TAG_NAME
 
