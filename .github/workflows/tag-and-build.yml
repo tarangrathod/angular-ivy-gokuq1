@@ -45,6 +45,8 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v2
         with:
+          run: |
+            docker builder prune --all
           context: .
           build-args: ZXBILD=${ZXBILD}
           push: false
