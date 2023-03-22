@@ -36,4 +36,4 @@ jobs:
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}_${{ env.ENV_NAME }}
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:latest
         build-args: |
-          ZXBUILD=$ENV_NAME
+          ZXBUILD=${{ env.ENV_NAME }}
