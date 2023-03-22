@@ -27,6 +27,7 @@ RUN if [ "$ZXBILD" = "fcc" ] ; then \
 RUN if [ "$ZXBILD" = "gfl" ] ; then \
     npm run start; fi
 
+
 # Stage 2: Serve app with nginx server
 
 # Use official nginx image as the base image
