@@ -46,7 +46,7 @@ jobs:
         username: ${{ github.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         tags: |
-          my-docker-registry/my-docker-image:$TAG_NAME_$ENV_NAME
-          my-docker-registry/my-docker-image:latest
+         github.DOCKERHUB_USERNAME/gitaction:$TAG_NAME_$ENV_NAME
+          github.DOCKERHUB_USERNAME/gitaction:latest
         build-args: |
           ZXBUILD=$ENV_NAME
