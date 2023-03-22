@@ -35,7 +35,7 @@ jobs:
         tags: |
           echo ${{env.TAG_NAME}}
           echo ${{env.ENV_NAME}}
-          ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}_${{ env.ENV_NAME }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:latest
         build-args: |
-          ZXBUILD=${{ env.ENV_NAME }}
+          ZXBUILD=${{ env.TAG_NAME | cut -d'-' -f2 }}
