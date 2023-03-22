@@ -23,6 +23,13 @@ jobs:
           echo "Tag name and environment name must be defined in commit message"
           exit 1
         fi
+    
+    - name: Set tag name and release name
+      if: success()
+      id: set-tag-and-release
+      run: |
+        export BUILD_ENV=$(echo $TAG_NAME | cut -d'-' -f2)
+        echo "BUILD_ENV=$BUILD_ENV" >> $GITHUB_ENV
 
     - name: Build Docker image
       if: success()
@@ -38,4 +45,4 @@ jobs:
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:latest
         build-args: |
-          ZXBUILD=${{ env.TAG_NAME | cut -d'-' -f2 }}
+          ZXBUILD=${{ env.BUILD_ENV }}
