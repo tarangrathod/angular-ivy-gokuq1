@@ -43,10 +43,10 @@ jobs:
       with:
         context: .
         push: false
-        username: ${{ github.DOCKERHUB_USERNAME }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
         tags: |
-         github.DOCKERHUB_USERNAME/gitaction:$TAG_NAME_$ENV_NAME
-          github.DOCKERHUB_USERNAME/gitaction:latest
+          secrets.DOCKERHUB_USERNAME/gitaction:$TAG_NAME_$ENV_NAME
+          secrets.DOCKERHUB_USERNAME/gitaction:latest
         build-args: |
           ZXBUILD=$ENV_NAME
