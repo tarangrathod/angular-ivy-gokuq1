@@ -1,0 +1,52 @@
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  create-tag-and-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set Git default identity
+      env:
+        GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
+        GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
+      run: |
+        git config --global user.name "$GIT_AUTHOR_NAME"
+        git config --global user.email "$GIT_AUTHOR_EMAIL"
+
+    - name: Set tag and environment name from ref
+      id: set-vars
+      run: |
+        echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        echo "ENV_NAME=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_ENV
+
+    - name: Check if tag and environment name are defined
+      run: |
+        if [[ -z "$TAG_NAME" || -z "$ENV_NAME" ]]; then
+          echo "Tag name and environment name must be defined in commit message"
+          exit 1
+        fi
+
+    - name: Create Git tag
+      if: success()
+      run: |
+        git tag "$TAG_NAME"
+        git push origin "$TAG_NAME"
+
+    - name: Build Docker image
+      if: success()
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        push: false
+        username: ${{ github.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        tags: |
+          my-docker-registry/my-docker-image:$TAG_NAME-$ENV_NAME
+          my-docker-registry/my-docker-image:$TAG_NAME-latest
+        build-args: |
+          ZXBUILD=$ENV_NAME
