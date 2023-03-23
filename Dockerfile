@@ -8,7 +8,7 @@ COPY . /usr/local/app
 #RUN npm run build --prod
 # Generate the build of the application
 ARG ZXBILD="prod"   #default argument when not provided in the --build-arg
-
+run echo $ZXBILD
 RUN if [ "$ZXBILD" = "prod" ] ; then \
     ng build; fi
 
