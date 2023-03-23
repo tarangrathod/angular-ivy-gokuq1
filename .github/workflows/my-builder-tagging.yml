@@ -15,7 +15,7 @@ jobs:
       id: set-vars
       run: |
         echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-        echo "ENV_NAME=${GITHUB_REF#refs/tags/*/}" >> $GITHUB_ENV
+        echo "ENV_NAME=${GITHUB_REF#refs/tags/*/ | cut -d'-' -f2}" >> $GITHUB_ENV
 
     - name: Check if tag and environment name are defined
       run: |
@@ -37,7 +37,7 @@ jobs:
       with:
         context: .
         push: true
-        build-args: ZXBILD=$BUILD_ENV
+        build-args: ZXBILD=$ENV_NAME
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:latest
