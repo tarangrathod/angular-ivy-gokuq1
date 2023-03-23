@@ -30,7 +30,7 @@ jobs:
       run: |
         export BUILD_ENV=$(echo $TAG_NAME | cut -d'-' -f2)
         echo "BUILD_ENV=$BUILD_ENV" >> $GITHUB_ENV
-        echo BUILD_ENV
+        echo $BUILD_ENV
 
     - name: Build Docker image
       if: success()
