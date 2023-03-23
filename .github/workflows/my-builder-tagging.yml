@@ -37,8 +37,6 @@ jobs:
       with:
         context: .
         push: true
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
         build-args: ZXBILD=${env.BUILD_ENV }
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
