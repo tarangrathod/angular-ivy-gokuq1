@@ -3,7 +3,7 @@ FROM node:16-alpine as build-step
 WORKDIR /usr/local/app
 COPY package.json /usr/local/app
 COPY .npmrc /usr/local/app
-RUN npm install
+RUN npm install -f
 COPY . /usr/local/app
 #RUN npm run build --prod
 # Generate the build of the application
