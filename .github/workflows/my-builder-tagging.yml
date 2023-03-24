@@ -29,8 +29,12 @@ jobs:
       id: set-tag-and-release
       run: |
         export BUILD_ENV=$(echo $TAG_NAME | cut -d'-' -f2)
-        echo "BUILD_ENV=$BUILD_ENV" >> $GITHUB_ENV
-        echo $BUILD_ENV
+    
+    - name: Login docker
+      if: success()
+      run: | # log into docker hub account
+        docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} 
+
 
     - name: Build Docker image
       if: success()
@@ -42,5 +46,3 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
           ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:latest
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}  
