@@ -10,23 +10,54 @@ on:
     inputs:
       name:
         # Friendly description to be shown in the UI instead of 'name'
-        description: 'Person to greet'
+        description: "tag name"
         # Default value if no value is explicitly provided
-        default: 'World'
+        default: "v1.0.40-prod"
         # Input has to be provided for the workflow to run
         required: true
         # The data type of the input
         type: string
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
-  greet:
-    # The type of runner that the job will run on
+  create-tag-and-build:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Runs a single command using the runners shell
-    - name: Send greeting
-      run: echo "Hello ${{ inputs.name }}"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set tag and environment name from ref
+        id: set-vars
+        run: |
+          echo "TAG_NAME=${{inputs.name}}" >> $GITHUB_ENV
+          echo "ENV_NAME=${GITHUB_REF#refs/tags/*/ | cut -d'-' -f2}" >> $GITHUB_ENV
+
+      - name: Check if tag and environment name are defined
+        run: |
+          if [[ -z "$TAG_NAME" || -z "$ENV_NAME" ]]; then
+            echo "Tag name and environment name must be defined in commit message"
+            exit 1
+          fi
+
+      - name: Set tag name and release name
+        if: success()
+        id: set-tag-and-release
+        run: |
+          export BUILD_ENV=$(echo $TAG_NAME | cut -d'-' -f2)
+          echo "BUILD_ENV=$BUILD_ENV" >> $GITHUB_ENV
+          echo $BUILD_ENV
+
+      - name: Login docker
+        if: success()
+        run: | # log into docker hub account
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Docker image
+        if: success()
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          build-args: ZXBILD=${{env.BUILD_ENV}}
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:${{ env.TAG_NAME }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/gitaction:latest
